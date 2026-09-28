@@ -1,6 +1,6 @@
 # Business Model Canvas de Netflix
 
-**Visualiza el Canvas:** [Abrir la página publicada en GitHub Pages](https://edgar-cbr.github.io/index.html)
+**Visualiza el Canvas:** [Abrir la página publicada en GitHub Pages](https://edgar-cbr.github.io/Practicas_Integradora_230496/Practica03/netflix-canvas/)
 
 ![Netflix](/Practica03/netflix-canvas/Netflix.png)
 
