@@ -4,10 +4,10 @@ Repositorio de Practicas de la Materia de Integradora
 
 ## Datos de la Materia
 
-**Materia:** Integradora 
- **Carrera** Ingeniería en Desarrollo y Gestión de Software 
-**Docente**  M.T.I. Marco A. Ramírez Hernández 
-**Periodo**  Septiembre - Diciembre 
+**Materia:** Integradora<br>
+ **Carrera** Ingeniería en Desarrollo y Gestión de Software<br> 
+**Docente**  M.T.I. Marco A. Ramírez Hernández <br>
+**Periodo**  Septiembre - Diciembre <br>
 
 ## Tabla de Prácticas de la Materia
 
