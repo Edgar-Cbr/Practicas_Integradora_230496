@@ -1,0 +1,315 @@
+{
+    "schema_version":  1,
+    "diagram_type":  "architecture",
+    "meta":  {
+                 "title":  "Flutter Mobile System Architecture",
+                 "output":  "architecture-system.html",
+                 "quality_profile":  "showcase",
+                 "views":  [
+                               {
+                                   "id":  "runtime",
+                                   "label":  "Application runtime",
+                                   "focus":  [
+                                                 "mobile",
+                                                 "keycloak",
+                                                 "api",
+                                                 "postgres",
+                                                 "mongo",
+                                                 "maps"
+                                             ],
+                                   "note":  "Follow mobile requests through identity, API, data stores, and maps."
+                               },
+                               {
+                                   "id":  "development",
+                                   "label":  "Development environment",
+                                   "focus":  [
+                                                 "docker",
+                                                 "compose",
+                                                 "git",
+                                                 "github",
+                                                 "api",
+                                                 "postgres",
+                                                 "mongo"
+                                             ],
+                                   "note":  "See how local containers and source control support development."
+                               },
+                               {
+                                   "id":  "trust",
+                                   "label":  "Trust boundaries",
+                                   "focus":  [
+                                                 "mobile",
+                                                 "keycloak",
+                                                 "api",
+                                                 "postgres",
+                                                 "mongo",
+                                                 "maps"
+                                             ],
+                                   "note":  "Review the client, application, data, and external service boundaries."
+                               }
+                           ]
+             },
+    "components":  [
+                       {
+                           "id":  "mobile",
+                           "type":  "frontend",
+                           "label":  "Flutter Mobile App",
+                           "sublabel":  "Mobile client",
+                           "pos":  [
+                                       70,
+                                       300
+                                   ],
+                           "size":  [
+                                        170,
+                                        72
+                                    ],
+                           "tag":  "Client"
+                       },
+                       {
+                           "id":  "keycloak",
+                           "type":  "security",
+                           "label":  "Keycloak",
+                           "sublabel":  "Authentication",
+                           "pos":  [
+                                       320,
+                                       125
+                                   ],
+                           "size":  [
+                                        160,
+                                        72
+                                    ],
+                           "tag":  "Identity"
+                       },
+                       {
+                           "id":  "api",
+                           "type":  "backend",
+                           "label":  "FastAPI REST API",
+                           "sublabel":  "Application services",
+                           "pos":  [
+                                       570,
+                                       300
+                                   ],
+                           "size":  [
+                                        180,
+                                        76
+                                    ],
+                           "tag":  "API layer"
+                       },
+                       {
+                           "id":  "postgres",
+                           "type":  "database",
+                           "label":  "PostgreSQL",
+                           "sublabel":  "Relational data",
+                           "pos":  [
+                                       855,
+                                       185
+                                   ],
+                           "size":  [
+                                        155,
+                                        68
+                                    ]
+                       },
+                       {
+                           "id":  "mongo",
+                           "type":  "database",
+                           "label":  "MongoDB",
+                           "sublabel":  "Document data",
+                           "pos":  [
+                                       855,
+                                       400
+                                   ],
+                           "size":  [
+                                        155,
+                                        68
+                                    ]
+                       },
+                       {
+                           "id":  "maps",
+                           "type":  "external",
+                           "label":  "Leaflet / Maps Service",
+                           "sublabel":  "External maps",
+                           "pos":  [
+                                       320,
+                                       410
+                                   ],
+                           "size":  [
+                                        180,
+                                        72
+                                    ]
+                       },
+                       {
+                           "id":  "docker",
+                           "type":  "cloud",
+                           "label":  "Docker",
+                           "sublabel":  "Container runtime",
+                           "pos":  [
+                                       650,
+                                       505
+                                   ],
+                           "size":  [
+                                        150,
+                                        64
+                                    ]
+                       },
+                       {
+                           "id":  "compose",
+                           "type":  "cloud",
+                           "label":  "Docker Compose",
+                           "sublabel":  "Local orchestration",
+                           "pos":  [
+                                       900,
+                                       505
+                                   ],
+                           "size":  [
+                                        175,
+                                        64
+                                    ]
+                       },
+                       {
+                           "id":  "git",
+                           "type":  "external",
+                           "label":  "Git",
+                           "sublabel":  "Version control",
+                           "pos":  [
+                                       70,
+                                       505
+                                   ],
+                           "size":  [
+                                        130,
+                                        64
+                                    ]
+                       },
+                       {
+                           "id":  "github",
+                           "type":  "cloud",
+                           "label":  "GitHub",
+                           "sublabel":  "Remote repository",
+                           "pos":  [
+                                       480,
+                                       505
+                                   ],
+                           "size":  [
+                                        145,
+                                        64
+                                    ]
+                       }
+                   ],
+    "boundaries":  [
+                       {
+                           "kind":  "security-group",
+                           "label":  "Application and data trust boundary",
+                           "wraps":  [
+                                         "api",
+                                         "postgres",
+                                         "mongo",
+                                         "docker",
+                                         "compose"
+                                     ],
+                           "pad":  30
+                       },
+                       {
+                           "kind":  "region",
+                           "label":  "External identity and maps services",
+                           "wraps":  [
+                                         "keycloak",
+                                         "maps"
+                                     ],
+                           "pad":  22
+                       },
+                       {
+                           "kind":  "region",
+                           "label":  "Source control",
+                           "wraps":  [
+                                         "git",
+                                         "github"
+                                     ],
+                           "pad":  20
+                       }
+                   ],
+    "connections":  [
+                        {
+                            "id":  "mobile-auth",
+                            "from":  "mobile",
+                            "to":  "keycloak",
+                            "label":  "Sign in / tokens",
+                            "variant":  "security"
+                        },
+                        {
+                            "id":  "mobile-api",
+                            "from":  "mobile",
+                            "to":  "api",
+                            "label":  "HTTPS REST",
+                            "variant":  "emphasis",
+                            "labelAt":  [
+                                            325,
+                                            390
+                                        ]
+                        },
+                        {
+                            "id":  "api-identity",
+                            "from":  "api",
+                            "to":  "keycloak",
+                            "label":  "Validate token",
+                            "variant":  "security"
+                        },
+                        {
+                            "id":  "api-postgres",
+                            "from":  "api",
+                            "to":  "postgres",
+                            "label":  "SQL queries"
+                        },
+                        {
+                            "id":  "api-mongo",
+                            "from":  "api",
+                            "to":  "mongo",
+                            "label":  "Documents"
+                        },
+                        {
+                            "id":  "mobile-maps",
+                            "from":  "mobile",
+                            "to":  "maps",
+                            "label":  "Map tiles / map view",
+                            "variant":  "dashed"
+                        },
+                        {
+                            "id":  "compose-docker",
+                            "from":  "compose",
+                            "to":  "docker",
+                            "label":  "Orchestrates",
+                            "variant":  "dashed"
+                        },
+                        {
+                            "id":  "git-github",
+                            "from":  "git",
+                            "to":  "github",
+                            "label":  "Push / pull",
+                            "variant":  "dashed"
+                        }
+                    ],
+    "cards":  [
+                  {
+                      "dot":  "cyan",
+                      "title":  "Runtime",
+                      "items":  [
+                                    "Flutter calls FastAPI over HTTPS",
+                                    "Keycloak supplies identity tokens",
+                                    "FastAPI reads and writes both data stores"
+                                ]
+                  },
+                  {
+                      "dot":  "violet",
+                      "title":  "External services",
+                      "items":  [
+                                    "Keycloak provides authentication",
+                                    "Mobile client consumes Leaflet / Maps Service"
+                                ]
+                  },
+                  {
+                      "dot":  "amber",
+                      "title":  "Development",
+                      "items":  [
+                                    "Docker Compose orchestrates local containers",
+                                    "Git tracks source; GitHub hosts the remote repository"
+                                ]
+                  }
+              ]
+}
