@@ -1,0 +1,1406 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Diagrama académico de secuencia de pantallas (sketches) de Netflix con 2 roles: Espectador y Productor de contenido.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%23141414'/%3E%3Cpath d='M11 7h5v26h-5z' fill='%23B81D24'/%3E%3Cpath d='M24 7h5v26h-5z' fill='%23B81D24'/%3E%3Cpath d='M11 7l15 26h3L14 7z' fill='%23E50914'/%3E%3C/svg%3E">
+  <title>Secuencia de pantallas · Netflix (Ejercicio Académico)</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #141414;
+      --paper: #1c1c1c;
+      --card-bg: #262626;
+      --ink: #FFFFFF;
+      --muted: #B3B3B3;
+      --line: #3d3d3d;
+      --fill: #333333;
+      --fill2: #242424;
+      --accent: #E50914;
+      --accent-hover: #b81d24;
+      --accent-ink: #FFFFFF;
+      --accent-glow: rgba(229, 9, 20, 0.35);
+      --frame: #111111;
+      --phone: #181818;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      --font-stack: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body.light {
+      color-scheme: light;
+      --bg: #F4F4F6;
+      --paper: #FFFFFF;
+      --card-bg: #EAEAEA;
+      --ink: #141414;
+      --muted: #555555;
+      --line: #CECECE;
+      --fill: #DFDFDF;
+      --fill2: #F0F0F0;
+      --accent: #E50914;
+      --accent-hover: #b81d24;
+      --accent-ink: #FFFFFF;
+      --accent-glow: rgba(229, 9, 20, 0.2);
+      --frame: #242424;
+      --phone: #FFFFFF;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 14px/1.4 var(--font-stack);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button {
+      font: inherit;
+      color: inherit;
+      cursor: pointer;
+      user-select: none;
+      border: none;
+      background: none;
+    }
+
+    button:focus-visible, [tabindex]:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    /* HEADER */
+    .top {
+      max-width: 1650px;
+      margin: auto;
+      padding: 28px clamp(16px, 3vw, 48px) 14px;
+    }
+    .head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+    }
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .72rem;
+      color: var(--accent);
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .titleline {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+      font-weight: 900;
+      line-height: 1.15;
+      margin: 8px 0;
+    }
+    .brandmark {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 44px;
+    }
+    .head p {
+      max-width: 860px;
+      color: var(--muted);
+      margin: 8px 0;
+      font-size: .95rem;
+    }
+    .academic {
+      font-size: .82rem;
+      color: var(--muted);
+      border-left: 3px solid var(--accent);
+      padding: 6px 12px;
+      margin: 14px 0 0;
+      background: rgba(229, 9, 20, 0.05);
+      border-radius: 0 6px 6px 0;
+    }
+
+    .tools, .roles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .tools { justify-content: flex-end; }
+    .tool, .rolebtn {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      padding: 8px 14px;
+      font-size: .84rem;
+      font-weight: 600;
+      transition: all .15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .tool:hover, .rolebtn:hover {
+      border-color: var(--accent);
+      color: var(--ink);
+    }
+    .rolebtn[aria-pressed="true"] {
+      background: var(--accent);
+      color: var(--accent-ink);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .roles { margin-top: 14px; }
+    .guide {
+      font-size: .82rem;
+      color: var(--muted);
+      margin: 14px 0 4px;
+    }
+
+    /* CANVAS & LANES */
+    .canvas {
+      overflow-x: auto;
+      padding: 8px 24px 32px;
+      scrollbar-color: var(--line) transparent;
+    }
+    .lanes {
+      max-width: 1650px;
+      min-width: 1320px;
+      margin: auto;
+      display: grid;
+      gap: 20px;
+    }
+    .lane {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 20px 22px 22px;
+      box-shadow: var(--shadow);
+      transition: opacity .25s ease, filter .25s ease;
+    }
+    .lane.dim {
+      opacity: 0.35;
+      filter: grayscale(0.9);
+    }
+    .lanehead {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 16px;
+    }
+    .lanehead h2 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin: 0;
+      scroll-margin-top: 30px;
+    }
+    .lanehead .badge {
+      background: var(--fill);
+      color: var(--accent);
+      font-size: .72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+    }
+    .lanehead .hint {
+      margin-left: auto;
+      color: var(--muted);
+      font-size: .8rem;
+    }
+    .icon {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      color: var(--accent);
+    }
+    .icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* FLOW & PHONES */
+    .flow {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .screen-wrap {
+      width: 194px;
+      flex: 0 0 194px;
+      position: relative;
+    }
+    .phone {
+      width: 100%;
+      height: 356px;
+      border: 2.5px solid var(--frame);
+      border-radius: 26px;
+      background: var(--phone);
+      padding: 9px;
+      position: relative;
+      display: block;
+      text-align: left;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      cursor: pointer;
+    }
+    .phone:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 12px 24px var(--accent-glow);
+    }
+    .notch {
+      position: absolute;
+      top: 0;
+      left: calc(50% - 32px);
+      height: 12px;
+      width: 64px;
+      background: var(--frame);
+      border-radius: 0 0 10px 10px;
+      z-index: 2;
+    }
+    .screen {
+      height: 100%;
+      min-width: 0;
+      overflow: hidden;
+      border-radius: 17px;
+      background: var(--fill2);
+      padding: 22px 10px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      font-size: .62rem;
+    }
+
+    /* WIREFRAME COMPONENTS */
+    .status-bar {
+      height: 7px;
+      width: 42%;
+      background: var(--fill);
+      border-radius: 5px;
+      align-self: flex-end;
+    }
+    .appbar {
+      font-size: .8rem;
+      font-weight: 800;
+      line-height: 1.2;
+      border-bottom: 1px solid var(--line);
+      padding: 2px 0 6px;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .appbar .brand-dot {
+      color: var(--accent);
+      font-size: 1.1rem;
+      line-height: 0;
+    }
+    .tiny {
+      font-size: .59rem;
+      color: var(--muted);
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+    .label {
+      font-size: .66rem;
+      font-weight: 750;
+      line-height: 1.24;
+      color: var(--ink);
+    }
+    .field {
+      height: 24px;
+      min-height: 24px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: var(--paper);
+      padding: 4px 7px;
+      font-size: .58rem;
+      color: var(--muted);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+    }
+    .block {
+      min-height: 28px;
+      background: var(--fill);
+      border-radius: 5px;
+      padding: 6px;
+      font-size: .58rem;
+      line-height: 1.2;
+    }
+    .tile {
+      background: var(--fill);
+      border-radius: 5px;
+      min-height: 32px;
+      padding: 6px 8px;
+      font-size: .60rem;
+      font-weight: 650;
+      line-height: 1.15;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 24px;
+      border-bottom: 1px solid var(--line);
+      padding: 3px 1px;
+      font-size: .58rem;
+    }
+    .cover {
+      width: 36px;
+      height: 36px;
+      flex: 0 0 36px;
+      background: var(--fill);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+    }
+    .cover.poster {
+      width: 100%;
+      height: 82px;
+      flex: 0 0 82px;
+      border-radius: 6px;
+      background: linear-gradient(180deg, var(--fill) 0%, #000 100%);
+      display: flex;
+      align-items: flex-end;
+      padding: 6px;
+      font-weight: 800;
+      color: #fff;
+      font-size: .68rem;
+    }
+    .cover.avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 6px;
+      background: var(--fill);
+      border: 2px solid var(--accent);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: .75rem;
+    }
+    .buttonmock {
+      min-height: 24px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: var(--fill);
+      padding: 4px 8px;
+      text-align: center;
+      font-size: .61rem;
+      font-weight: 750;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .buttonmock.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--accent-ink);
+    }
+    .buttonmock.secondary {
+      background: var(--paper);
+      border-color: var(--line);
+      color: var(--ink);
+    }
+    .spacer { flex: 1; }
+
+    /* Video player sketch */
+    .player-box {
+      width: 100%;
+      height: 102px;
+      flex: 0 0 102px;
+      background: #000;
+      border-radius: 6px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 6px;
+      border: 1px solid var(--line);
+    }
+    .player-center {
+      align-self: center;
+      font-size: 1.4rem;
+      color: var(--accent);
+    }
+    .player-bar {
+      height: 3px;
+      width: 100%;
+      background: #444;
+      border-radius: 2px;
+      position: relative;
+    }
+    .player-progress {
+      height: 100%;
+      width: 58%;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    /* Studio metric sketches */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+    }
+    .metric {
+      padding: 6px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 5px;
+    }
+    .metric b {
+      display: block;
+      font-size: .82rem;
+      color: var(--accent);
+    }
+    .metric span {
+      font-size: .52rem;
+      color: var(--muted);
+    }
+    .chart-box {
+      height: 48px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      padding: 5px;
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+    }
+    .chart-bar {
+      flex: 1;
+      background: var(--accent);
+      border-radius: 2px 2px 0 0;
+      opacity: .8;
+    }
+
+    /* STEP BADGE & ARROWS */
+    .step {
+      position: absolute;
+      z-index: 3;
+      left: 6px;
+      top: -10px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: var(--bg);
+      display: grid;
+      place-items: center;
+      font-size: .68rem;
+      font-weight: 900;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .caption {
+      text-align: center;
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--muted);
+      line-height: 1.25;
+      min-height: 2.2em;
+      margin: 8px 0 0;
+    }
+    .arrow {
+      width: 24px;
+      flex: 0 0 24px;
+      margin-top: 155px;
+      text-align: center;
+      color: var(--accent);
+      font-size: .62rem;
+      font-weight: 800;
+      position: relative;
+    }
+    .arrow:after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 20px;
+      border-top: 1.5px solid var(--accent);
+    }
+    .arrow:before {
+      content: "›";
+      position: absolute;
+      right: -2px;
+      top: 9px;
+      font-size: 1.3rem;
+      line-height: 1;
+      background: var(--paper);
+      color: var(--accent);
+      z-index: 1;
+    }
+
+    /* CROSS LANE CONNECTOR */
+    .cross {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      text-align: center;
+      color: var(--accent);
+      font-size: .8rem;
+      font-weight: 700;
+      padding: 4px 14px;
+      letter-spacing: .02em;
+    }
+    .cross:before, .cross:after {
+      content: "";
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      flex: 1;
+    }
+    .cross svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 2;
+      flex: 0 0 auto;
+    }
+
+    /* ALTERNATES */
+    .alternates {
+      max-width: 1650px;
+      margin: 8px auto 26px;
+      padding: 0 24px;
+    }
+    .alternates h2 {
+      font-size: .98rem;
+      margin: 0 0 12px;
+      font-weight: 750;
+    }
+    .altrow {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 4px 1px 12px;
+    }
+    .alt {
+      width: 205px;
+      flex: 0 0 205px;
+      min-height: 118px;
+      background: var(--paper);
+      border: 1px dashed var(--line);
+      border-radius: 12px;
+      text-align: left;
+      padding: 14px;
+      cursor: pointer;
+      transition: all .16s ease;
+    }
+    .alt:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px var(--accent-glow);
+    }
+    .alt .tag {
+      font-size: .62rem;
+      font-weight: 700;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 9px;
+      padding: 2px 7px;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+    .alt b {
+      display: block;
+      font-size: .80rem;
+      margin: 4px 0;
+      color: var(--ink);
+    }
+    .alt small {
+      display: block;
+      color: var(--muted);
+      font-size: .69rem;
+      line-height: 1.3;
+    }
+
+    /* FOOTER */
+    .foot {
+      max-width: 1650px;
+      padding: 0 24px 30px;
+      margin: auto;
+      color: var(--muted);
+      font-size: .74rem;
+      border-top: 1px solid var(--line);
+      padding-top: 18px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* MODAL OVERLAY & PANEL */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: flex-end;
+      justify-content: flex-end;
+      z-index: 99;
+      opacity: 0;
+      transition: opacity .2s ease;
+    }
+    .overlay.open {
+      display: flex;
+      opacity: 1;
+    }
+    .panel {
+      height: 100%;
+      width: min(460px, 100%);
+      overflow-y: auto;
+      padding: 28px;
+      background: var(--paper);
+      color: var(--ink);
+      border-left: 2px solid var(--accent);
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.7);
+      transform: translateX(100%);
+      transition: transform .25s ease;
+    }
+    .overlay.open .panel {
+      transform: translateX(0);
+    }
+    .paneltop {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .panel h2 {
+      font-size: 1.35rem;
+      font-weight: 850;
+      margin: 6px 0 0;
+    }
+    .panel h3 {
+      font-size: .86rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--accent);
+      margin: 22px 0 6px;
+      font-weight: 800;
+    }
+    .panel p {
+      font-size: .88rem;
+      color: var(--muted);
+      line-height: 1.5;
+      margin: 0;
+    }
+    .panel .close {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--fill);
+      padding: 7px 12px;
+      font-weight: 700;
+      font-size: .82rem;
+      transition: all .15s ease;
+    }
+    .panel .close:hover {
+      background: var(--accent);
+      color: var(--accent-ink);
+      border-color: var(--accent);
+    }
+    .sr {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* ROLE ARRIVAL ANIMATION */
+    .lane.arrived {
+      animation: role-arrival 1s ease-out;
+    }
+    @keyframes role-arrival {
+      0% {
+        outline: 3px solid var(--accent);
+        outline-offset: 2px;
+        box-shadow: 0 0 0 8px var(--accent-glow), var(--shadow);
+      }
+      100% {
+        outline: 1px solid transparent;
+        outline-offset: 6px;
+        box-shadow: var(--shadow);
+      }
+    }
+
+    @media(max-width: 768px) {
+      .head { display: block; }
+      .tools { justify-content: flex-start; margin-top: 14px; }
+      .canvas { padding-left: 14px; padding-right: 14px; }
+      .lanes { min-width: 1280px; }
+      .alternates { padding: 0 14px; }
+      .panel {
+        height: min(85%, 680px);
+        width: 100%;
+        border-radius: 20px 20px 0 0;
+        border-left: none;
+        border-top: 3px solid var(--accent);
+        transform: translateY(100%);
+      }
+      .overlay.open .panel {
+        transform: translateY(0);
+      }
+    }
+
+    @media(prefers-reduced-motion: reduce) {
+      *, *:before, *:after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="top">
+    <div class="head">
+      <div>
+        <div class="eyebrow">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v12H4z"/></svg>
+          Netflix · sketches móviles interactivos
+        </div>
+        <h1 class="titleline">
+          <svg class="brandmark" role="img" aria-label="Logotipo original de cinta cinematográfica de streaming" viewBox="0 0 48 48">
+            <rect width="48" height="48" rx="10" fill="#141414"/>
+            <path d="M12 9h6v30h-6z" fill="#B81D24"/>
+            <path d="M30 9h6v30h-6z" fill="#B81D24"/>
+            <path d="M12 9l18 30h6L18 9z" fill="#E50914"/>
+          </svg>
+          <span>Secuencia de pantallas por rol</span>
+        </h1>
+        <p>Recorridos de baja fidelidad para la aplicación móvil de <strong>Netflix</strong>: rol <strong>Espectador</strong> (consumo y exploración) y rol <strong>Productor / Estudio</strong> (Studio Hub y analítica de audiencia). Basado en modelos de streaming y en la práctica 03 (Business Model Canvas).</p>
+        <p class="academic">Ejercicio académico, no oficial ni afiliado a Netflix. Bocetos de baja fidelidad en escala de grises con paleta inspirada.</p>
+      </div>
+      <div class="tools">
+        <button type="button" class="tool" id="theme" aria-pressed="false">Tema claro</button>
+        <button type="button" class="tool" id="reset">Restablecer</button>
+      </div>
+    </div>
+
+    <!-- ROLE FILTERS -->
+    <div class="roles" aria-label="Seleccionar recorrido de rol">
+      <button type="button" class="rolebtn" data-role="viewer" aria-pressed="false">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Espectador
+      </button>
+      <button type="button" class="rolebtn" data-role="producer" aria-pressed="false">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        Productor / Estudio
+      </button>
+    </div>
+    <div class="guide">Haz clic en cualquier pantalla o pulsa Enter para abrir el panel de detalle. En dispositivos pequeños, desliza horizontalmente el carril.</div>
+  </header>
+
+  <div id="role-live" class="sr" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- CANVAS LANES -->
+  <main class="canvas">
+    <div class="lanes">
+
+      <!-- LANE 1: ESPECTADOR -->
+      <section class="lane" data-lane="viewer" aria-labelledby="viewer-heading">
+        <div class="lanehead">
+          <span class="icon" role="img" aria-label="Espectador">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </span>
+          <h2 id="viewer-heading" tabindex="-1">Espectador</h2>
+          <span class="badge">Rol de usuario final</span>
+          <span class="hint">Netflix · Aplicación móvil de streaming</span>
+        </div>
+
+        <div class="flow">
+          <!-- Pantalla 1: Login / Perfiles -->
+          <div class="screen-wrap">
+            <button class="phone" data-screen="v-login" aria-label="Pantalla 1: Inicio de sesión y selección de perfil">
+              <span class="step">1</span>
+              <span class="notch"></span>
+              <span class="screen">
+                <span class="status-bar"></span>
+                <span class="appbar"><span class="brand-dot">■</span> Netflix</span>
+                <span class="tiny" style="text-align:center;margin-top:4px">¿Quién está viendo?</span>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px auto;width:95%">
+                  <div style="text-align:center"><div class="cover avatar" style="margin:auto">E</div><span class="tiny">Edgar</span></div>
+                  <div style="text-align:center"><div class="cover avatar" style="margin:auto;border-color:var(--line)">K</div><span class="tiny">Niños</span></div>
+                  <div style="text-align:center"><div class="cover avatar" style="margin:auto;border-color:var(--line)">F</div><span class="tiny">Familia</span></div>
+                  <div style="text-align:center"><div class="cover avatar" style="margin:auto;border-color:var(--line);border-style:dashed">+</div><span class="tiny">Agregar</span></div>
+                </div>
+                <span class="spacer"></span>
+                <span class="buttonmock secondary">Administrar perfiles</span>
+              </span>
+            </button>
+            <p class="caption">1. Perfiles de usuario</p>
+          </div>
+
+          <div class="arrow" aria-hidden="true">1</div>
+
+          <!-- Pantalla 2: Inicio / Billboard -->
+          <div class="screen-wrap">
+            <button class="phone" data-screen="v-home" aria-label="Pantalla 2: Inicio y cartelera">
+              <span class="step">2</span>
+              <span class="notch"></span>
+              <span class="screen">
+                <span class="status-bar"></span>
+                <span class="appbar"><span class="brand-dot">■</span> Inicio <span class="tiny" style="margin-left:auto">Series · Pelis</span></span>
+                <div class="cover poster">
+                  <span>Serie Original #1<br><span style="font-weight:400;font-size:.54rem">Tendencia global hoy</span></span>
+                </div>
+                <div style="display:flex;gap:6px">
+                  <span class="buttonmock primary" style="flex:1">▶ Reproducir</span>
+                  <span class="buttonmock secondary" style="flex:1">+ Mi lista</span>
+                </div>
+                <span class="label">Continuar viendo</span>
+                <div style="display:flex;gap:5px;overflow:hidden">
+                  <div class="cover" style="width:48px;height:28px"></div>
+                  <div class="cover" style="width:48px;height:28px"></div>
+                  <div class="cover" style="width:48px;height:28px"></div>
+                </div>
+                <span class="spacer"></span>
+                <span class="tiny" style="text-align:center;border-top:1px solid var(--line);padding-top:4px">Inicio · Buscar · Descargas</span>
+              </span>
+            </button>
+            <p class="caption">2. Inicio (Billboard)</p>
+          </div>
+
+          <div class="arrow" aria-hidden="true">2</div>
+
+          <!-- Pantalla 3: Buscar / Explorar -->
+          <div class="screen-wrap">
+            <button class="phone" data-screen="v-search" aria-label="Pantalla 3: Búsqueda y categorías">
+              <span class="step">3</span>
+              <span class="notch"></span>
+              <span class="screen">
+                <span class="status-bar"></span>
+                <span class="appbar">Buscar</span>
+                <div class="field">🔍 Buscar películas, series...</div>
+                <span class="label">Top 10 en tu país</span>
+                <div class="row"><b style="color:var(--accent);font-size:.78rem">1</b><span class="cover" style="height:24px;width:32px"></span><span>Thriller Sci-Fi<br><span class="tiny">Película</span></span></div>
+                <div class="row"><b style="color:var(--accent);font-size:.78rem">2</b><span class="cover" style="height:24px;width:32px"></span><span>Drama Legal<br><span class="tiny">Serie · Temp 2</span></span></div>
+                <div class="row"><b style="color:var(--accent);font-size:.78rem">3</b><span class="cover" style="height:24px;width:32px"></span><span>Comedia Acción<br><span class="tiny">Película</span></span></div>
+                <span class="spacer"></span>
+                <div style="display:flex;gap:4px"><span class="buttonmock secondary" style="flex:1">Acción</span><span class="buttonmock secondary" style="flex:1">Anime</span><span class="buttonmock secondary" style="flex:1">Docu</span></div>
+              </span>
+            </button>
+            <p class="caption">3. Buscar y Explorar</p>
+          </div>
+
+          <div class="arrow" aria-hidden="true">3</div>
+
+          <!-- Pantalla 4: Detalle de Título -->
+          <div class="screen-wrap">
+            <button class="phone" data-screen="v-detail" aria-label="Pantalla 4: Detalle del título">
+              <span class="step">4</span>
+              <span class="notch"></span>
+              <span class="screen">
+                <span class="status-bar"></span>
+                <div class="cover poster" style="height:70px">
+                  <span>Detalle de Serie</span>
+                </div>
+                <span class="label">Serie Destacada</span>
+                <span class="tiny">2025 · 16+ · 3 Temporadas · Ultra HD</span>
+                <span class="buttonmock primary">▶ Reanudar T1:E4</span>
+                <span class="buttonmock secondary">⬇ Descargar temporada</span>
+                <span class="block">Sinopsis de ejemplo: Un grupo de especialistas investiga anomalías temporales...</span>
+                <span class="label">Episodios (Temp 1)</span>
+                <div class="row"><span>1. El Origen (48m)</span></div>
+                <div class="row"><span>2. La Señal (51m)</span></div>
+                <span class="spacer"></span>
+              </span>
+            </button>
+            <p class="caption">4. Ficha de Detalle</p>
+          </div>
+
+          <div class="arrow" aria-hidden="true">4</div>
+
+          <!-- Pantalla 5: Reproductor -->
+          <div class="screen-wrap">
+            <button class="phone" data-screen="v-player" aria-label="Pantalla 5: Reproductor de streaming">
+              <span class="step">5</span>
+              <span class="notch"></span>
+              <span class="screen">
+                <span class="status-bar"></span>
+                <span class="appbar">Reproducción activa</span>
+                <div class="player-box">
+                  <div style="display:flex;justify-content:space-between"><span class="tiny" style="color:#aaa">T1:E4</span><span class="tiny" style="color:#aaa">Español 5.1</span></div>
+                  <div class="player-center">⏸</div>
+                  <div>
+                    <div class="player-bar"><div class="player-progress"></div></div>
+                    <div style="display:flex;justify-content:space-between;margin-top:2px"><span class="tiny" style="color:#888">24:18</span><span class="tiny" style="color:#888">-26:42</span></div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin:4px 0">
+                  <span class="buttonmock secondary" style="flex:1">↺ 10s</span>
+                  <span class="buttonmock secondary" style="flex:1">10s ↻</span>
+                  <span class="buttonmock secondary" style="flex:1">Subtítulos</span>
+                </div>
+                <span class="buttonmock primary">⏭ Siguiente episodio</span>
+                <span class="buttonmock secondary">🔒 Bloquear pantalla</span>
+                <span class="spacer"></span>
+              </span>
+            </button>
+            <p class="caption">5. Reproductor de video</p>
+          </div>
+
+          <div class="arrow" aria-hidden="true">5</div>
+
+          <!-- Pantalla 6: Mi lista y Descargas -->
+          <div class="screen-wrap">
+            <button class="phone" data-screen="v-library" aria-label="Pantalla 6: Mi lista y descargas">
+              <span class="step">6</span>
+              <span class="notch"></span>
+              <span class="screen">
+                <span class="status-bar"></span>
+                <span class="appbar">Mi lista y Descargas</span>
+                <div style="display:flex;border-bottom:1px solid var(--line);gap:10px;padding-bottom:4px">
+                  <b style="color:var(--accent);font-size:.65rem">Mi lista (12)</b>
+                  <span class="tiny">Descargas (3)</span>
+                </div>
+                <div class="row"><span class="cover" style="width:28px;height:36px"></span><span>Sci-Fi Original<br><span class="tiny">Película · 1h 54m</span></span></div>
+                <div class="row"><span class="cover" style="width:28px;height:36px"></span><span>Drama Misterio<br><span class="tiny">Serie · 2 temporadas</span></span></div>
+                <div class="row"><span class="cover" style="width:28px;height:36px"></span><span>Documental Tierra<br><span class="tiny">Serie documental</span></span></div>
+                <span class="spacer"></span>
+                <div class="field" style="font-size:.52rem">💾 Almacenamiento: 4.2 GB libres</div>
+              </span>
+            </button>
+            <p class="caption">6. Mi lista y Descargas</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CROSS-LANE FLOW -->
+      <div class="cross" aria-label="Las reproducciones y horas vistas alimentan las métricas y regalías del productor">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        <span>Visualizaciones y horas vistas del espectador → Métricas de audiencia y regalías del productor</span>
+      </div>
+
+      <!-- LANE 2: PRODUCTOR / ESTUDIO -->
+      <section class="lane" data-lane="producer" aria-labelledby="producer-heading">
+        <div class="lanehead">
+          <span class="icon" role="img" aria-label="Productor / Estudio">
+            <svg viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          </span>
+          <h2 id="producer-heading" tabindex="-1">Productor / Estudio</h2>
+          <span class="badge">Rol corporativo y creativo</span>
+          <span class="hint">Netflix Studio Hub · Herramientas para creadores y distribuidoras</span>
+        </div>
+
+        <div class="flow">
+          <!-- Pantalla 1: Login Studio Hub -->
+          <div class="screen-wrap">
+            <button class="phone" data-screen="p-login" aria-label="Pantalla 1: Acceso a Studio Hub">
+              <span class="step">1</span>
+              <span class="notch"></span>
+              <span class="screen">
+                <span class="status-bar"></span>
+                <span class="appbar"><span class="brand-dot">■</span> Studio Hub</span>
+                <span class="block">Portal de creadores, productoras y distribuidoras aliadas.</span>
+                <span class="label">Credencial corporativa</span>
+                <div class="field">productor@estudio.com</div>
+                <span class="label">Código de seguridad 2FA</span>
+                <div class="field">6 dígitos</div>
+                <span class="spacer"></span>
+                <span class="buttonmock primary">Autenticar estudio</span>
+              </span>
+            </button>
+            <p class="caption">1. Acceso a Studio Hub</p>
+          </div>
+
+          <div class="arrow" aria-hidden="true">1</div>
+
+          <!-- Pantalla 2: Dashboard Principal -->
+          <div class="screen-wrap">
+            <button class="phone" data-screen="p-home" aria-label="Pantalla 2: Panel principal de producción">
+              <span class="step">2</span>
+              <span class="notch"></span>
+              <span class="screen">
+                <span class="status-bar"></span>
+                <span class="appbar">Panel de Estudio</span>
+                <span class="label">Resumen global de catálogo</span>
+                <div class="metric-grid">
+                  <div class="metric"><b>42.8M</b><span>Horas vistas (mes)</span></div>
+                  <div class="metric"><b>8</b><span>Títulos en catálogo</span></div>
+                </div>
+                <span class="label">Título más visto</span>
+                <div class="tile">Serie Sci-Fi Temp 1<br><span class="tiny" style="color:var(--accent)">#3 en Top 10 Global</span></div>
+                <span class="label">Alertas técnicas</span>
+                <div class="field">✓ Master 4K QC Aprobado</div>
+                <span class="spacer"></span>
+                <span class="tiny">Panel · Audiencia · Catálogo · Contratos</span>
+              </span>
+            </button>
+            <p class="caption">2. Panel de Producción</p>
+          </div>
+
+          <div class="arrow" aria-hidden="true">2</div>
+
+          <!-- Pantalla 3: Métricas de Audiencia -->
+          <div class="screen-wrap">
+            <button class="phone" data-screen="p-audience" aria-label="Pantalla 3: Métricas de audiencia y retención">
+              <span class="step">3</span>
+              <span class="notch"></span>
+              <span class="screen">
+                <span class="status-bar"></span>
+                <span class="appbar">Métricas de Audiencia</span>
+                <div class="metric-grid">
+                  <div class="metric"><b>18.4M</b><span>Cuentas alcanzadas</span></div>
+                  <div class="metric"><b>84%</b><span>Tasa de finalización</span></div>
+                </div>
+                <span class="label">Curva de retención (28 días)</span>
+                <div class="chart-box">
+                  <div class="chart-bar" style="height:90%"></div>
+                  <div class="chart-bar" style="height:82%"></div>
+                  <div class="chart-bar" style="height:75%"></div>
+                  <div class="chart-bar" style="height:68%"></div>
+                  <div class="chart-bar" style="height:62%"></div>
+                  <div class="chart-bar" style="height:58%"></div>
+                </div>
+                <span class="tiny" style="text-align:right">E1 ───› E6</span>
+                <span class="label">Top Regiones</span>
+                <div class="tiny">1. LATAM (44%) · 2. Norteamérica (32%)</div>
+                <span class="spacer"></span>
+              </span>
+            </button>
+            <p class="caption">3. Audiencia y retención</p>
+          </div>
+
+          <div class="arrow" aria-hidden="true">3</div>
+
+          <!-- Pantalla 4: Catálogo y Entregas -->
+          <div class="screen-wrap">
+            <button class="phone" data-screen="p-catalog" aria-label="Pantalla 4: Gestión de catálogo y entregas">
+              <span class="step">4</span>
+              <span class="notch"></span>
+              <span class="screen">
+                <span class="status-bar"></span>
+                <span class="appbar">Catálogo y Entregas</span>
+                <span class="label">Proyectos en curso</span>
+                <div class="row">
+                  <span class="cover" style="width:24px;height:24px"></span>
+                  <span>Temporada 2 (6 eps)<br><span class="tiny" style="color:var(--accent)">En revisión QC master</span></span>
+                </div>
+                <div class="row">
+                  <span class="cover" style="width:24px;height:24px"></span>
+                  <span>Documental Exclusivo<br><span class="tiny">Subtítulos 18 idiomas</span></span>
+                </div>
+                <div class="row">
+                  <span class="cover" style="width:24px;height:24px"></span>
+                  <span>Largometraje 2026<br><span class="tiny">En pre-estreno</span></span>
+                </div>
+                <span class="spacer"></span>
+                <span class="buttonmock primary">+ Nueva entrega digital</span>
+              </span>
+            </button>
+            <p class="caption">4. Catálogo y entregas</p>
+          </div>
+
+          <div class="arrow" aria-hidden="true">4</div>
+
+          <!-- Pantalla 5: Ficha de Producción y Reporte -->
+          <div class="screen-wrap">
+            <button class="phone" data-screen="p-detail" aria-label="Pantalla 5: Ficha de producción y liquidación">
+              <span class="step">5</span>
+              <span class="notch"></span>
+              <span class="screen">
+                <span class="status-bar"></span>
+                <span class="appbar">Ficha de Título</span>
+                <div class="cover poster" style="height:60px">
+                  <span>Serie Sci-Fi #1</span>
+                </div>
+                <span class="label">Reporte de impacto y liquidación</span>
+                <div class="metric-grid">
+                  <div class="metric"><b>#1</b><span>Países Top 10 (14)</span></div>
+                  <div class="metric"><b>A+</b><span>Calificación de audiencia</span></div>
+                </div>
+                <span class="block">Estado de contrato: Licencia global activa hasta 2029 con renovación prioritaria.</span>
+                <span class="buttonmock primary">Descargar reporte financiero</span>
+                <span class="spacer"></span>
+              </span>
+            </button>
+            <p class="caption">5. Ficha y liquidación</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ALTERNATES -->
+  <section class="alternates">
+    <h2>Estados alternos fuera del flujo principal</h2>
+    <div class="altrow">
+      <button type="button" class="alt" data-screen="x-offline">
+        <span class="tag">Espectador</span>
+        <b>Modo sin conexión</b>
+        <small>Dispositivo sin acceso a internet; solo se habilita la reproducción de títulos previamente descargados.</small>
+      </button>
+
+      <button type="button" class="alt" data-screen="x-no-results">
+        <span class="tag">Espectador</span>
+        <b>Búsqueda sin coincidencias</b>
+        <small>El título exacto no está disponible; se muestran recomendaciones basadas en género o directores afines.</small>
+      </button>
+
+      <button type="button" class="alt" data-screen="x-unavailable">
+        <span class="tag">Espectador</span>
+        <b>Contenido restringido</b>
+        <small>Aviso de restricción territorial o licencia expirada temporalmente en la región geográfica del usuario.</small>
+      </button>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="foot">
+    <span>Bocetos de baja fidelidad para el ejercicio académico de <strong>Práctica 06</strong> · Materia de Integradora.</span>
+    <span>Autor: <strong>Edgar Cabrera Velazquez</strong> (Matrícula: 230496)</span>
+  </footer>
+
+  <!-- DETAIL MODAL OVERLAY -->
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="panel-title">
+    <aside class="panel">
+      <div class="paneltop">
+        <div>
+          <div class="eyebrow" id="panel-role">Detalle de pantalla</div>
+          <h2 id="panel-title">Título</h2>
+        </div>
+        <button type="button" class="close" id="close" aria-label="Cerrar panel de detalle">Cerrar ✕</button>
+      </div>
+      <div id="panel-body"></div>
+    </aside>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    const details = {
+      'v-login': [
+        'Espectador',
+        'Inicio de sesión y selección de perfiles',
+        'Permitir que el usuario se autentique y seleccione su perfil personal dentro de la cuenta del hogar para mantener recomendaciones y listas separadas.',
+        'Avatar personal, perfiles de miembros de la familia, perfil especial para niños con control parental, opción de agregar nuevo perfil y botón de administración.',
+        'Toca el perfil de Edgar → Ingresa a la Pantalla de Inicio (Billboard).'
+      ],
+      'v-home': [
+        'Espectador',
+        'Inicio (Cartelera y Carruseles)',
+        'Presentar el estreno o contenido más relevante en un gran Billboard superior con acceso inmediato, seguido de filas personalizadas de recomendaciones.',
+        'Billboard con póster principal, botón destacado "Reproducir", botón "+ Mi lista", carrusel "Continuar viendo" y fila de tendencias.',
+        'Toca el botón Buscar en la barra de navegación → Pantalla de Búsqueda y Exploración.'
+      ],
+      'v-search': [
+        'Espectador',
+        'Buscar y Explorar',
+        'Permitir encontrar títulos específicos por nombre, actores o directores, o explorar el catálogo a través de los títulos más vistos del día.',
+        'Campo de texto de búsqueda en tiempo real, lista clasificada del Top 10 hoy en el país y filtros rápidos por categorías (Acción, Anime, Documentales).',
+        'Toca un título del Top 10 o de los resultados → Ficha de Detalle del Título.'
+      ],
+      'v-detail': [
+        'Espectador',
+        'Ficha de Detalle de Película / Serie',
+        'Proveer sinopsis completa, ficha técnica, elenco, temporadas, duración, opciones de audio y control de lista personal antes de reproducir.',
+        'Póster principal de cabecera, etiquetas de año, edad recomendada y resolución (4K/HDR), botón grande de Reproducción, selector de temporadas y lista de episodios.',
+        'Toca el botón Reproducir → Pantalla de Reproductor de Video.'
+      ],
+      'v-player': [
+        'Espectador',
+        'Reproductor de Video en Streaming',
+        'Brindar una experiencia inmersiva de visualización con controles precisos de reproducción, selección de idiomas de audio y subtítulos cerrados.',
+        'Ventana de video interactiva, barra de avance temporal, controles de salto de 10 segundos, selector de audio/subtítulos, botón de bloqueo de pantalla y botón de siguiente episodio.',
+        'Pulsa atrás y abre la pestaña de Mi lista → Pantalla de Mi Lista y Descargas.'
+      ],
+      'v-library': [
+        'Espectador',
+        'Mi lista y Contenido Descargado',
+        'Gestionar la colección de series y películas guardadas para ver después, así como administrar el almacenamiento ocupado por descargas offline.',
+        'Pestañas conmutables entre "Mi lista" y "Descargas", tarjetas con miniaturas y botón de descarga rápida, e indicador del espacio libre en el dispositivo.',
+        'Selecciona cualquier título para comenzar la reproducción directa.'
+      ],
+      'p-login': [
+        'Productor / Estudio',
+        'Acceso seguro a Netflix Studio Hub',
+        'Autenticación empresarial para casas productoras, directores y distribuidores autorizados con acceso al catálogo maestro.',
+        'Formulario con correo corporativo, autenticación de dos factores (2FA) y selección de la productora asociada.',
+        'Introduce el código de verificación → Ingresa al Panel Principal del Estudio.'
+      ],
+      'p-home': [
+        'Productor / Estudio',
+        'Panel Principal de Producción (Dashboard)',
+        'Brindar una vista panorámica del rendimiento de los títulos licenciados u originales del estudio en la plataforma.',
+        'Tarjetas de horas de visualización mensuales acumuladas (Hours Viewed), títulos activos, monitoreo del Top 10 global y avisos de control de calidad.',
+        'Toca el módulo de análisis de audiencia → Pantalla de Métricas de Audiencia y Retención.'
+      ],
+      'p-audience': [
+        'Productor / Estudio',
+        'Métricas de Audiencia y Curva de Retención',
+        'Evaluar la recepción del contenido a nivel global y cómo los espectadores avanzan a través de los episodios de una temporada.',
+        'Gráfico de barras de retención episodio por episodio, métrica de cuentas alcanzadas en los primeros 28 días y distribución demográfica por región.',
+        'Selecciona la pestaña de Catálogo → Gestión de Catálogo y Entregas Digitales.'
+      ],
+      'p-catalog': [
+        'Productor / Estudio',
+        'Gestión de Catálogo y Entregas Digitales',
+        'Supervisar el flujo de trabajo de posproducción, revisión de calidad (QC) de audio/video y preparación de paquetes multilingües.',
+        'Lista de proyectos con semáforo de estado ("En revisión QC", "Aprobado", "En catálogo"), progreso de subtitulado y botón de entrega de nuevos masters.',
+        'Selecciona un título en catálogo → Ficha de Producción y Liquidación.'
+      ],
+      'p-detail': [
+        'Productor / Estudio',
+        'Ficha de Producción y Liquidación Financiera',
+        'Consultar el expediente integral de un título, impacto en ranking internacional y el reporte contractual de regalías.',
+        'Ficha técnica maestra, resumen de países donde alcanzó el Top 10, calificación promedio de usuarios y botón para descargar el reporte financiero oficial.',
+        'El recorrido del rol de Productor concluye en esta ficha de gestión integral.'
+      ],
+      'x-offline': [
+        'Espectador',
+        'Modo sin conexión a internet',
+        'Avisar al usuario que no cuenta con conexión de red y dirigirlo a reproducir el contenido que descargó previamente en la memoria de su teléfono.',
+        'Banner de advertencia de desconexión, lista filtrada únicamente con títulos descargados y botón para reintentar la conexión.',
+        'Conéctate a una red Wi-Fi o datos para restaurar el catálogo completo.'
+      ],
+      'x-no-results': [
+        'Espectador',
+        'Búsqueda sin coincidencias directas',
+        'Evitar frustración al no hallar un título específico sugiriendo producciones del mismo género o con temática similar disponibles en el catálogo.',
+        'Mensaje amigable "No encontramos resultados para tu búsqueda", sugerencias temáticas y mosaico de títulos recomendados.',
+        'Modifica la búsqueda o toca una recomendación para abrir su detalle.'
+      ],
+      'x-unavailable': [
+        'Espectador',
+        'Contenido no disponible en tu región',
+        'Informar con claridad que una película o serie no está licenciada en el país actual del usuario o que su disponibilidad ha finalizado.',
+        'Ícono de restricción geográfica, explicación de derechos de distribución y botón para recibir notificación si el título vuelve a estar disponible.',
+        'Regresa a la pantalla de Inicio para explorar otros títulos disponibles.'
+      ]
+    };
+
+    const overlay = document.getElementById('overlay');
+    const panelTitle = document.getElementById('panel-title');
+    const panelRole = document.getElementById('panel-role');
+    const panelBody = document.getElementById('panel-body');
+    const closeBtn = document.getElementById('close');
+    let triggerEl = null;
+
+    function openPanel(id, el) {
+      const d = details[id];
+      if (!d) return;
+      triggerEl = el;
+      panelRole.textContent = d[0];
+      panelTitle.textContent = d[1];
+      panelBody.replaceChildren();
+
+      const sections = [
+        ['Propósito de la pantalla', d[2]],
+        ['Elementos de la interfaz', d[3]],
+        ['Acción hacia la siguiente pantalla', d[4]]
+      ];
+
+      for (const [title, text] of sections) {
+        const h = document.createElement('h3');
+        h.textContent = title;
+        const p = document.createElement('p');
+        p.textContent = text;
+        panelBody.append(h, p);
+      }
+
+      overlay.classList.add('open');
+      closeBtn.focus();
+    }
+
+    function closePanel() {
+      overlay.classList.remove('open');
+      if (triggerEl) triggerEl.focus();
+    }
+
+    document.querySelectorAll('[data-screen]').forEach(el => {
+      el.addEventListener('click', () => openPanel(el.dataset.screen, el));
+    });
+
+    closeBtn.addEventListener('click', closePanel);
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closePanel();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.classList.contains('open')) closePanel();
+    });
+
+    // ROLE NAVIGATION & HIGHLIGHT
+    document.querySelectorAll('.rolebtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const role = btn.dataset.role;
+        document.querySelectorAll('.rolebtn').forEach(b => {
+          b.setAttribute('aria-pressed', String(b === btn));
+        });
+
+        document.querySelectorAll('.lane').forEach(l => {
+          l.classList.toggle('dim', l.dataset.lane !== role);
+        });
+
+        const targetLane = document.querySelector(`.lane[data-lane="${role}"]`);
+        const heading = targetLane.querySelector('.lanehead h2');
+        const canvas = document.querySelector('.canvas');
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        canvas.scrollTo({ left: 0, behavior: reduce ? 'auto' : 'smooth' });
+
+        const rect = targetLane.getBoundingClientRect();
+        const margin = 28;
+        const fullyVisible = rect.top >= margin && rect.bottom <= window.innerHeight;
+
+        if (!fullyVisible) {
+          window.scrollTo({
+            top: Math.max(0, window.scrollY + rect.top - margin),
+            behavior: reduce ? 'auto' : 'smooth'
+          });
+        }
+
+        heading.setAttribute('tabindex', '-1');
+        heading.focus({ preventScroll: true });
+
+        document.getElementById('role-live').textContent =
+          `Mostrando el recorrido del ${role === 'producer' ? 'Productor / Estudio' : 'Espectador'}.`;
+
+        if (!reduce) {
+          targetLane.classList.remove('arrived');
+          void targetLane.offsetWidth;
+          targetLane.classList.add('arrived');
+          targetLane.addEventListener('animationend', () => targetLane.classList.remove('arrived'), { once: true });
+        }
+      });
+    });
+
+    // THEME TOGGLE
+    const themeBtn = document.getElementById('theme');
+    themeBtn.addEventListener('click', () => {
+      const isLight = document.body.classList.toggle('light');
+      themeBtn.setAttribute('aria-pressed', String(isLight));
+      themeBtn.textContent = isLight ? 'Tema oscuro' : 'Tema claro';
+    });
+
+    // RESET BUTTON
+    document.getElementById('reset').addEventListener('click', () => {
+      document.querySelectorAll('.rolebtn').forEach(b => b.setAttribute('aria-pressed', 'false'));
+      document.querySelectorAll('.lane').forEach(l => l.classList.remove('dim'));
+      document.body.classList.remove('light');
+      themeBtn.setAttribute('aria-pressed', 'false');
+      themeBtn.textContent = 'Tema claro';
+      closePanel();
+    });
+  </script>
+</body>
+</html>
