@@ -1,0 +1,133 @@
+{
+  "$schema": "https://archify.dev/schemas/screen-sequence.v1.json",
+  "title": "Diagrama de Secuencia de Pantallas (Sketches) de Netflix",
+  "app": "Netflix",
+  "type": "academic-exercise",
+  "roles": [
+    {
+      "id": "viewer",
+      "name": "Espectador",
+      "appSubtitle": "Netflix · Aplicación móvil de streaming",
+      "screens": [
+        {
+          "id": "v-login",
+          "step": 1,
+          "name": "Inicio de sesión / Perfiles",
+          "purpose": "Acceder a la cuenta y seleccionar el perfil de usuario que verá el contenido.",
+          "uiElements": "Campos de correo y clave; cuadrícula de perfiles ('¿Quién está viendo?') y opción de agregar perfil.",
+          "nextAction": "Selecciona un perfil → Pantalla de inicio."
+        },
+        {
+          "id": "v-home",
+          "step": 2,
+          "name": "Inicio",
+          "purpose": "Descubrir contenido mediante el póster principal destacado y carruseles temáticos.",
+          "uiElements": "Billboard de estreno destacado, botones de 'Reproducir' e 'Info', carruseles 'Continuar viendo', 'Tendencias' y barra de navegación inferior.",
+          "nextAction": "Toca Buscar en la barra de navegación → Pantalla de búsqueda."
+        },
+        {
+          "id": "v-search",
+          "step": 3,
+          "name": "Buscar y Explorar",
+          "purpose": "Localizar películas, series, géneros específicos o consultar el Top 10 diario.",
+          "uiElements": "Campo de búsqueda con ícono de lupa, filtros rápidos (Películas, Series, Categorías) y cuadrícula con el Top 10 hoy.",
+          "nextAction": "Selecciona un título de los resultados → Ficha de detalle."
+        },
+        {
+          "id": "v-detail",
+          "step": 4,
+          "name": "Detalle de título (Película / Serie)",
+          "purpose": "Consultar sinopsis, elenco, año, calificación por edades y gestionar la reproducción.",
+          "uiElements": "Póster cabecera, metadatos (año, HD, temporadas), botón grande 'Reproducir', botón '+ Mi lista', selector de episodios y títulos similares.",
+          "nextAction": "Toca el botón Reproducir → Reproductor de video."
+        },
+        {
+          "id": "v-player",
+          "step": 5,
+          "name": "Reproductor de video",
+          "purpose": "Controlar la experiencia de visualización del contenido en streaming.",
+          "uiElements": "Ventana de video, controles de pausa/reproducción, salto de 10s adelante/atrás, barra de tiempo, selector de audio y subtítulos, botón 'Bloquear' y 'Siguiente episodio'.",
+          "nextAction": "Termina la visualización o pulsa atrás y abre Mi lista → Pantalla de Mi lista y descargas."
+        },
+        {
+          "id": "v-library",
+          "step": 6,
+          "name": "Mi lista y Descargas",
+          "purpose": "Acceder rápidamente al contenido guardado por el usuario y gestionar títulos descargados para ver sin conexión.",
+          "uiElements": "Pestañas 'Mi lista' y 'Descargas', tarjetas de títulos guardados con botón de eliminar o reproducir, indicador de almacenamiento usado.",
+          "nextAction": "Selecciona cualquier título para volver a reproducir."
+        }
+      ]
+    },
+    {
+      "id": "producer",
+      "name": "Productor / Estudio",
+      "appSubtitle": "Netflix Studio Hub · Herramientas para creadores de contenido",
+      "screens": [
+        {
+          "id": "p-login",
+          "step": 1,
+          "name": "Acceso a Studio Hub",
+          "purpose": "Autenticación segura para socios productores, estudios de filmación y distribuidores licenciados.",
+          "uiElements": "Acceso corporativo con autenticación en dos factores (2FA), selector de estudio o productora asociada.",
+          "nextAction": "Inicia sesión → Panel principal del estudio."
+        },
+        {
+          "id": "p-home",
+          "step": 2,
+          "name": "Panel principal (Dashboard)",
+          "purpose": "Visualizar un resumen ejecutivo del rendimiento global de las producciones en la plataforma.",
+          "uiElements": "Métricas rápidas de horas vistas globales (Hours Viewed), títulos activos en catálogo, alertas de entregas técnicas y accesos directos.",
+          "nextAction": "Toca el módulo de Audiencia → Métricas de audiencia."
+        },
+        {
+          "id": "p-audience",
+          "step": 3,
+          "name": "Métricas de audiencia",
+          "purpose": "Analizar la penetración, retención y comportamiento de los espectadores a nivel mundial.",
+          "uiElements": "Gráfica de curva de retención por episodio, total de cuentas únicas alcanzadas en los primeros 28 días, desglose por países e idiomas de doblaje más solicitados.",
+          "nextAction": "Selecciona Catálogo → Gestión de producciones y entregas."
+        },
+        {
+          "id": "p-catalog",
+          "step": 4,
+          "name": "Catálogo y entregas",
+          "purpose": "Monitorear el estado de posproducción, revisión de calidad (QC) y fechas de lanzamiento programadas.",
+          "uiElements": "Lista de proyectos en curso, estados ('En revisión de QC', 'Aprobado para estreno', 'En catálogo'), barra de progreso de archivos maestros y subtítulos.",
+          "nextAction": "Selecciona un título en catálogo → Ficha de producción."
+        },
+        {
+          "id": "p-detail",
+          "step": 5,
+          "name": "Ficha de producción y rendimiento",
+          "purpose": "Revisar los datos integrales de una producción específica y su impacto en la plataforma.",
+          "uiElements": "Ficha técnica, metadatos maestros, horas vistas acumuladas, ranking alcanzado en el Top 10 semanal global y reportes de liquidación de regalías.",
+          "nextAction": "El recorrido del productor concluye en esta vista de gestión."
+        }
+      ]
+    }
+  ],
+  "crossFlow": {
+    "label": "Visualizaciones y horas vistas del espectador → Métricas de audiencia y regalías del productor"
+  },
+  "alternates": [
+    {
+      "id": "x-offline",
+      "role": "Espectador",
+      "name": "Modo sin conexión",
+      "description": "Indica que no hay acceso a internet y ofrece reproducir únicamente los títulos previamente descargados en el dispositivo."
+    },
+    {
+      "id": "x-no-results",
+      "role": "Espectador",
+      "name": "Búsqueda sin coincidencias directas",
+      "description": "Se informa al usuario que el título exacto no está disponible y se sugieren películas o series similares del catálogo."
+    },
+    {
+      "id": "x-unavailable",
+      "role": "Espectador",
+      "name": "Contenido restringido por licencia o región",
+      "description": "Aviso que notifica que el contenido no está disponible temporalmente o en la ubicación geográfica del usuario."
+    }
+  ]
+}
